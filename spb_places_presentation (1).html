@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Места Санкт-Петербурга</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+        
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .hero-content {
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 80px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero p {
+            font-size: 28px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 40px;
+        }
+        
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 60px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .place-card {
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .place-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+        }
+        
+        .place-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .place-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .place-card:hover .place-image img {
+            transform: scale(1.1);
+        }
+        
+        .place-info {
+            padding: 30px;
+        }
+        
+        .place-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .place-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        
+        .place-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .place-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .special-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            backdrop-filter: blur(10px);
+        }
+        
+        footer {
+            background: #0a0a0a;
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+        
+        footer p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 48px; }
+            .hero p { font-size: 20px; }
+            .places-grid { grid-template-columns: 1fr; }
+            .container { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>🎭 Места Петербурга</h1>
+            <p>Твой гид по самым интересным местам города</p>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Развлечения и культура</h2>
+        
+        <div class="places-grid">
+            <!-- Бурлеск кабаре -->
+            <div class="place-card">
+                <div class="place-image">
+                    <span class="special-badge">18+</span>
+                    🎭
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Шоу</span>
+                    <h3 class="place-title">Бурлеск кабаре</h3>
+                    <p class="place-description">
+                        Театрализованное шоу с элементами бурлеска, танцами и артистичными выступлениями. Атмосферное место для вечернего развлечения с профессиональными артистами.
+                    </p>
+                    <a href="https://www.burlesquecabaret.ru/" target="_blank" class="place-link">Узнать больше →</a>
+                </div>
+            </div>
+
+            <!-- Розовый Кролик -->
+            <div class="place-card">
+                <div class="place-image">
+                    <span class="special-badge">18+</span>
+                    🐰
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Музей</span>
+                    <h3 class="place-title">Розовый Кролик</h3>
+                    <p class="place-description">
+                        Интерактивный музей эротики и сексуальности с провокационными экспонатами и арт-объектами. Для взрослой аудитории.
+                    </p>
+                    <a href="https://pinkyrabbit.ru/" target="_blank" class="place-link">Посетить сайт →</a>
+                </div>
+            </div>
+
+            <!-- Библиотека Николая II -->
+            <div class="place-card">
+                <div class="place-image">
+                    📚
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">История</span>
+                    <h3 class="place-title">Библиотека Николая II</h3>
+                    <p class="place-description">
+                        Историческое место в Зимнем дворце с аутентичной обстановкой и книгами последнего императора. Действительно особенная атмосфера и потрясающий вайб.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Музей фотографии -->
+            <div class="place-card">
+                <div class="place-image">
+                    <span class="special-badge">Уникально</span>
+                    📷
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Музей</span>
+                    <h3 class="place-title">Музей фотографии</h3>
+                    <p class="place-description">
+                        Невский проспект 54. Можно сделать уникальное фото на стеклянной пластине по старинной технологии. Невероятный опыт!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cinema Michele -->
+            <div class="place-card">
+                <div class="place-image">
+                    🎬
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Кино</span>
+                    <h3 class="place-title">Cinema Michele</h3>
+                    <p class="place-description">
+                        Арт-кинотеатр с авторским кино и камерной атмосферой. Показывают независимые и фестивальные фильмы для ценителей настоящего кинематографа.
+                    </p>
+                </div>
+            </div>
+
+            <!-- MTS Live Hall -->
+            <div class="place-card">
+                <div class="place-image">
+                    <span class="special-badge">Хэллоуин 3 дня!</span>
+                    🎃
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Концерты</span>
+                    <h3 class="place-title">MTS Live Hall</h3>
+                    <p class="place-description">
+                        Концертная площадка для крупных мероприятий и вечеринок. Отличное место для хэллоуин-туса с Шастуном!
+                    </p>
+                    <a href="https://mtslivehall.ru/" target="_blank" class="place-link">Афиша →</a>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Бары и рестораны</h2>
+        
+        <div class="places-grid">
+            <!-- Bist Bar -->
+            <div class="place-card">
+                <div class="place-image">
+                    🍸
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Коктейльный бар</span>
+                    <h3 class="place-title">Bist Bar</h3>
+                    <p class="place-description">
+                        Коктейльный бар с авторскими напитками и уютной атмосферой. Популярное место среди любителей качественных коктейлей.
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Bootleggers -->
+            <div class="place-card">
+                <div class="place-image">
+                    🥃
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Спикизи</span>
+                    <h3 class="place-title">The Bootleggers</h3>
+                    <p class="place-description">
+                        Бар в стиле американского спикизи эпохи сухого закона. Крафтовые коктейли и атмосферный интерьер переносят в 1920-е годы.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Butcher and Barker -->
+            <div class="place-card">
+                <div class="place-image">
+                    🥩
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Стейк-хаус</span>
+                    <h3 class="place-title">Butcher and Barker</h3>
+                    <p class="place-description">
+                        Стейк-хаус с мясными специалитетами и барной картой. Известен качественным мясом и брутальным интерьером.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tootsie -->
+            <div class="place-card">
+                <div class="place-image">
+                    🍖
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Ресторан</span>
+                    <h3 class="place-title">Tootsie</h3>
+                    <p class="place-description">
+                        Ресторан с акцентом на мясные блюда и стейки. Качественные продукты и профессиональное приготовление.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Аранчини-Апельсини -->
+            <div class="place-card">
+                <div class="place-image">
+                    🍊
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Стрит-фуд</span>
+                    <h3 class="place-title">Аранчини-Апельсини</h3>
+                    <p class="place-description">
+                        Сицилийский стрит-фуд. Специализация на аранчини — рисовые шарики с начинкой. Аутентичная итальянская кухня.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Frank -->
+            <div class="place-card">
+                <div class="place-image">
+                    🍽️
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Ресторан</span>
+                    <h3 class="place-title">Frank</h3>
+                    <p class="place-description">
+                        Рекомендованное место с отличной кухней и атмосферой.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Развлечения и активности</h2>
+        
+        <div class="places-grid">
+            <!-- Overbet Poker Club -->
+            <div class="place-card">
+                <div class="place-image">
+                    ♠️
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Покер</span>
+                    <h3 class="place-title">Overbet Poker Club</h3>
+                    <p class="place-description">
+                        Покерный клуб для игры в техасский холдем и другие форматы покера. Профессиональная атмосфера для любителей карточных игр.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Экскурсия на завод сидра -->
+            <div class="place-card">
+                <div class="place-image">
+                    🍺
+                </div>
+                <div class="place-info">
+                    <span class="category-tag">Экскурсия</span>
+                    <h3 class="place-title">Завод сидра</h3>
+                    <p class="place-description">
+                        Производственная экскурсия с дегустацией местного сидра. Интересно для любителей крафтовых напитков.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>✨ Санкт-Петербург • 2024</p>
+        <p style="margin-top: 10px; font-size: 14px;">Лучшие места для незабываемых впечатлений</p>
+    </footer>
+
+    <script>
+        // Плавная прокрутка
+        document.querySelector('.scroll-indicator').addEventListener('click', () => {
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Анимация при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.place-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
